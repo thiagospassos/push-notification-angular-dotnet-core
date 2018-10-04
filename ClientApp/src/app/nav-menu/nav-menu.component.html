@@ -13,7 +13,7 @@
                 </li>
                 <li class="nav-item" [routerLinkActive]='["link-active"]'>
                     <a class="nav-link" [routerLink]='["/notifications"]' (click)='collapse()'>
-                        <i class='fa fa-bullhorn'></i> Notifications
+                        <i class='fa fa-bullhorn'></i> Notifications <span class="badge badge-secondary" *ngIf="notificationMiddleware.notifications.length">{{notificationMiddleware.notifications.length}}</span>
                     </a>
                 </li>
             </ul>

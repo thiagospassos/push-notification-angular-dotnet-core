@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NotificationMiddlewareService } from '../core/notification-middleware.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,6 +8,8 @@ import { Component } from '@angular/core';
 })
 export class NavMenuComponent {
   isExpanded = false;
+
+  constructor(public notificationMiddleware: NotificationMiddlewareService) { }
 
   collapse() {
     this.isExpanded = false;

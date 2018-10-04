@@ -1,1 +1,15 @@
 <h1>Notifications</h1>
+
+<button (click)="toggleSubscription()" class="btn btn-primary" [disabled]="notificationMiddleware.pushNotificationStatus.isInProgress || !notificationMiddleware.pushNotificationStatus.isSupported">
+  <span *ngIf="!notificationMiddleware.pushNotificationStatus.isSupported">Push is NOT supported by this device</span>
+  <span *ngIf="notificationMiddleware.pushNotificationStatus.isSupported && notificationMiddleware.pushNotificationStatus.isSubscribed">Unsubscribe</span>
+  <span *ngIf="notificationMiddleware.pushNotificationStatus.isSupported && !notificationMiddleware.pushNotificationStatus.isSubscribed">Subscribe</span>
+</button>
+
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="let notif of notificationMiddleware.notifications">
+    <a [routerLink]="cleanUrl(notif.Url)" (click)="removeNotif(notif)">{{notif.Title}}
+      <small>{{notif.Message}}</small>
+    </a>
+  </li>
+</ul>
