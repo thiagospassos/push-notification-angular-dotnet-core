@@ -231,3 +231,6 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+appsettings.Local.json
+ClientApp/src/environments/environment.ts
+ClientApp/src/environments/environment.prod.ts
