@@ -9,13 +9,15 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { NotificationService } from './core/generated';
+import { BroadcastComponent } from './broadcast/broadcast.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    BroadcastComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -23,7 +25,8 @@ import { NotificationService } from './core/generated';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'notifications', component: NotificationsComponent}
+      { path: 'notifications', component: NotificationsComponent},
+      { path: 'broadcast', component: BroadcastComponent}
     ])
   ],
   providers: [

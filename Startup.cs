@@ -12,9 +12,18 @@ namespace push_notification_angular_dotnet_core
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+
+                // Used for local settings like connection strings.
+                .AddJsonFile($"appsettings.Local.json", optional: true)
+                .AddEnvironmentVariables();
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -30,10 +39,11 @@ namespace push_notification_angular_dotnet_core
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddTransient(c => new VapidDetails(
+            var vapidDetails = new VapidDetails(
                 Configuration.GetValue<string>("VapidDetails:Subject"),
                 Configuration.GetValue<string>("VapidDetails:PublicKey"),
-                Configuration.GetValue<string>("VapidDetails:PrivateKey")));
+                Configuration.GetValue<string>("VapidDetails:PrivateKey"));
+            services.AddTransient(c => vapidDetails);
 
             services.AddSwagger();
         }

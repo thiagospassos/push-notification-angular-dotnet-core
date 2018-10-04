@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Newtonsoft.Json;
+using push;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
-using push;
+using WebPush;
 
 namespace push_notification_angular_dotnet_core.Controllers
 {
@@ -25,7 +25,7 @@ namespace push_notification_angular_dotnet_core.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public void Unsubscribe([FromBody] PushSubscription sub)
         {
-            var item = Subscriptions.FirstOrDefault(s => s.EndPoint == sub.EndPoint);
+            var item = Subscriptions.FirstOrDefault(s => s.Endpoint == sub.Endpoint);
             if (item != null)
             {
                 Subscriptions.Remove(item);
@@ -34,8 +34,15 @@ namespace push_notification_angular_dotnet_core.Controllers
 
         [HttpPost("broadcast")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public void Broadcast([FromBody] NotificationModel message)
+        public void Broadcast([FromBody] NotificationModel message, [FromServices] VapidDetails vapidDetails)
         {
+            var client = new WebPushClient();
+            var serializedMessage = JsonConvert.SerializeObject(message);
+            foreach (var pushSubscription in Subscriptions)
+            {
+                client.SendNotification(pushSubscription, serializedMessage, vapidDetails);
+            }
+
         }
     }
 }
