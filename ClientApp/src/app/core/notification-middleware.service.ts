@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.prod';
+import { NotificationService, PushSubscription } from './generated';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class NotificationMiddlewareService {
   private swRegistration = null;
   public notifications = [];
 
-  constructor() { }
+  constructor(private notificationService: NotificationService) { }
 
 
   init() {
@@ -70,7 +71,13 @@ export class NotificationMiddlewareService {
         console.log(JSON.stringify(subscription));
         var newSub = JSON.parse(JSON.stringify(subscription));
         console.log(newSub);
-        this.pushNotificationStatus.isSubscribed = true;
+        this.notificationService.subscribe(<PushSubscription>{
+          auth: newSub.keys.auth,
+          p256Dh: newSub.keys.p256dh,
+          endPoint: newSub.endpoint
+        }).subscribe(s => {
+          this.pushNotificationStatus.isSubscribed = true;
+        })
       })
       .catch(err => {
         console.log('Failed to subscribe the user: ', err);
@@ -82,9 +89,11 @@ export class NotificationMiddlewareService {
 
   unsubscribeUser() {
     this.pushNotificationStatus.isInProgress = true;
+    var sub;
     this.swRegistration.pushManager.getSubscription()
       .then(function (subscription) {
         if (subscription) {
+          sub = JSON.parse(JSON.stringify(subscription));
           return subscription.unsubscribe();
         }
       })
@@ -92,8 +101,14 @@ export class NotificationMiddlewareService {
         console.log('Error unsubscribing', error);
       })
       .then(() => {
-        this.pushNotificationStatus.isSubscribed = false;
-        this.pushNotificationStatus.isInProgress = false;
+        this.notificationService.unsubscribe(<PushSubscription>{
+          auth: sub.keys.auth,
+          p256Dh: sub.keys.p256dh,
+          endPoint: sub.endpoint
+        }).subscribe(() => {
+          this.pushNotificationStatus.isSubscribed = false;
+          this.pushNotificationStatus.isInProgress = false;
+        });
       });
   }
 

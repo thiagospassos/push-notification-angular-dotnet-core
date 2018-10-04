@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { NotificationService } from './core/generated';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,9 @@ import { NotificationsComponent } from './notifications/notifications.component'
       { path: 'notifications', component: NotificationsComponent}
     ])
   ],
-  providers: [],
+  providers: [
+    NotificationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

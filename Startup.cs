@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NSwag.AspNetCore;
+using WebPush;
 
 namespace push_notification_angular_dotnet_core
 {
@@ -27,6 +29,13 @@ namespace push_notification_angular_dotnet_core
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddTransient(c => new VapidDetails(
+                Configuration.GetValue<string>("VapidDetails:Subject"),
+                Configuration.GetValue<string>("VapidDetails:PublicKey"),
+                Configuration.GetValue<string>("VapidDetails:PrivateKey")));
+
+            services.AddSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +44,14 @@ namespace push_notification_angular_dotnet_core
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(config =>
+                {
+                    config.AllowCredentials();
+                    config.AllowAnyHeader();
+                    config.AllowAnyMethod();
+                    config.AllowAnyOrigin();
+                    config.WithOrigins("http://localhost:4201", "https://localhost:4201");
+                });
             }
             else
             {
@@ -52,6 +69,8 @@ namespace push_notification_angular_dotnet_core
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
+
+            app.UseSwaggerUi3WithApiExplorer(settings => { });
 
             app.UseSpa(spa =>
             {
